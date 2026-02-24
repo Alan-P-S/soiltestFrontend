@@ -1,0 +1,17 @@
+.gallery{
+    margin: 80px auto;
+    width: 90%;
+    text-align: center;
+
+}
+
+.camp{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+.gallery img{
+    width:32% ;
+    border-radius: 10px;
+}
