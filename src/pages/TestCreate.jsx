@@ -1,21 +1,8 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import useSoilTestStore from "../store/useSoilTestStore.js";
-import { useGeolocated } from "react-geolocated";
-import { useEffect } from "react";
+
 export default function AddSoilTest() {
-  const {coords, isGeolocationAvailable, isGeolocationEnabled} = useGeolocated({
-            positionOptions: {
-                enableHighAccuracy: false,
-            },
-            userDecisionTimeout: 5000,
-        });
-  const [location,setLocation] = useState({
-    loading:false,
-    latitude:null,
-    longitude:null,
-  });
-  useEffect(()=>{},[coords]);
   const {
     farmer,
     loading,
@@ -45,7 +32,7 @@ export default function AddSoilTest() {
       toast.error("Farmer not found");
     }
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -67,6 +54,7 @@ export default function AddSoilTest() {
         console.log(payload)
       await addSoilTest(payload);
       toast.success("Soil test added successfully");
+
       setPhone("");
       clearFarmer();
       setFormData({
@@ -78,8 +66,6 @@ export default function AddSoilTest() {
       toast.error("Failed to add soil test");
     }
   };
-      
-  
 
   return (
     <div className="min-h-screen bg-base-100 flex flex-col">
@@ -94,7 +80,7 @@ export default function AddSoilTest() {
       <main className="flex-1 flex items-center justify-center px-4">
         <div className="w-full max-w-xl">
           <div className="card bg-base-100 border border-base-300 shadow-sm">
-            <div className="card-body space-y-4">
+            <form onSubmit={handleSubmit} className="card-body space-y-4">
 
               {/* Phone */}
               <div>
@@ -134,15 +120,7 @@ export default function AddSoilTest() {
                     value={farmer.username}
                     disabled
                   />
-                   <input
-                type="text"
-                name="plot-location"
-                disabled={true}
-                placeholder="plot Location"
-                className="input input-bordered w-full"
-                required
-                />
-                
+
                   {/* Plot dropdown */}
                   <select
                     className="select select-bordered w-full"
@@ -181,19 +159,17 @@ export default function AddSoilTest() {
                     <option>Collected</option>
                     <option>Testing</option>
                   </select>
-                  {coords? <p>{coords.latitude} ,{coords.longitude}</p>:<p>No location</p>}
-                 
+
                   <button
                     type="submit"
                     className={`btn btn-primary ${loading ? "loading" : ""}`}
                     disabled={loading}
-                    onClick={handleSubmit}
                   >
                     Add Soil Test
                   </button>
                 </>
               )}
-            </div>
+            </form>
           </div>
         </div>
       </main>

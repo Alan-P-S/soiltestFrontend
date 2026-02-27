@@ -1,43 +1,50 @@
 import { useState } from "react";
-
+import useEventStore from "../store/useEventStore.js";
+import toast from "react-hot-toast";
 export default function CreateEvent() {
+  const {addEvent} = useEventStore();
   const [eventData, setEventData] = useState({
     title: "",
-    description: "",
+    Description: "",
     topic: "",
     date: "",
     time: "",
-    image: null,
+    Image: "",
   });
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
     if (name === "image") {
-      setEventData({ ...eventData, image: files[0] });
+      setEventData({ ...eventData, Image:"sample" });
     } else {
       setEventData({ ...eventData, [name]: value });
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const payload = {
       ...eventData,
     };
-
-    console.log("Event Created:", payload);
-    alert("Event created successfully");
-
-    setEventData({
+    try{
+      await addEvent(payload);
+      console.log("Event Created:", payload);
+      toast.success("Event Created");
+      setEventData({
       title: "",
-      description: "",
+      Description: "",
       topic: "",
       date: "",
       time: "",
-      image: null,
+      Image: null,
     });
+    }catch(err){
+      console.log(err);
+      toast.error(err.response?.data?.message || "Error in Event Creation")
+    }
+    
   };
 
   return (
@@ -106,8 +113,8 @@ export default function CreateEvent() {
                   <span className="label-text">Description</span>
                 </label>
                 <textarea
-                  name="description"
-                  value={eventData.description}
+                  name="Description"
+                  value={eventData.Description}
                   onChange={handleChange}
                   placeholder="Brief details about the event"
                   className="textarea textarea-bordered w-full"

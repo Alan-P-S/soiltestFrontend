@@ -109,7 +109,7 @@ export default function RegisterFarmer() {
                 onChange={handleChange}
                 required
               />
-             
+
               <input
                 type="number"
                 name="landArea"
@@ -119,6 +119,7 @@ export default function RegisterFarmer() {
                 onChange={handleChange}
                 required
               />
+
               <button
                 type="submit"
                 className={`btn btn-primary w-full ${
