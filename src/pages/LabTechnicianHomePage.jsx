@@ -3,7 +3,8 @@ import {
   UserPlus,
   CalendarPlus,
   FileEdit,
-  TestTube, // NEW ICON
+  TestTube,
+  TreePalm, // NEW ICON
 } from "lucide-react";
 
 export default function LabTechnicianHome() {
@@ -23,7 +24,6 @@ export default function LabTechnicianHome() {
       {/* Main */}
       <main className="flex-1 p-6 flex items-center justify-center">
         <div className="max-w-5xl w-full">
-
           {/* Welcome */}
           <div className="mb-10 text-center">
             <h1 className="text-2xl font-bold text-base-content">
@@ -36,7 +36,6 @@ export default function LabTechnicianHome() {
 
           {/* Action Cards */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-
             {/* Register Farmer */}
             <div
               onClick={() => navigate("/lab/register-farmer")}
@@ -48,9 +47,7 @@ export default function LabTechnicianHome() {
                 <p className="text-sm text-base-content/70">
                   Add a new farmer to the system
                 </p>
-                <button className="btn btn-primary btn-sm mt-4">
-                  Proceed
-                </button>
+                <button className="btn btn-primary btn-sm mt-4">Proceed</button>
               </div>
             </div>
 
@@ -65,9 +62,7 @@ export default function LabTechnicianHome() {
                 <p className="text-sm text-base-content/70">
                   Create soil camps or awareness events
                 </p>
-                <button className="btn btn-primary btn-sm mt-4">
-                  Proceed
-                </button>
+                <button className="btn btn-primary btn-sm mt-4">Proceed</button>
               </div>
             </div>
 
@@ -82,9 +77,7 @@ export default function LabTechnicianHome() {
                 <p className="text-sm text-base-content/70">
                   Create a new soil test sample entry
                 </p>
-                <button className="btn btn-primary btn-sm mt-4">
-                  Proceed
-                </button>
+                <button className="btn btn-primary btn-sm mt-4">Proceed</button>
               </div>
             </div>
 
@@ -99,12 +92,21 @@ export default function LabTechnicianHome() {
                 <p className="text-sm text-base-content/70">
                   Enter or modify soil test results
                 </p>
-                <button className="btn btn-primary btn-sm mt-4">
-                  Proceed
-                </button>
+                <button className="btn btn-primary btn-sm mt-4">Proceed</button>
               </div>
             </div>
 
+            <div
+              onClick={() => navigate("/lab/crop-add")}
+              className="card bg-base-100 border border-base-300 shadow-sm hover:shadow-md cursor-pointer transition"
+            >
+              <div className="card-body items-center text-center">
+                <TreePalm size={40} className="opacity-80" />
+                <h2 className="card-title">Add New Crop</h2>
+                <p className="text-sm text-base-content/70">Create new Crops</p>
+                <button className="btn btn-primary btn-sm mt-4">Proceed</button>
+              </div>
+            </div>
           </div>
         </div>
       </main>

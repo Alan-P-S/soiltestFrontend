@@ -25,7 +25,8 @@ export default function FarmerDashboard() {
       id: 2,
       title: "Farmer Awareness Program",
       topic: "Balanced Fertilizer Usage",
-      description: "Learn how to use fertilizers efficiently based on soil report.",
+      description:
+        "Learn how to use fertilizers efficiently based on soil report.",
       date: "2026-02-18",
       time: "09:30 AM",
       place: "Erode",
@@ -34,24 +35,18 @@ export default function FarmerDashboard() {
 
   return (
     <div className="min-h-screen bg-base-100 flex flex-col">
-
       {/* Header */}
       <div className="navbar bg-base-200 px-6 shadow-sm">
         <div className="flex-1">
-          <span className="text-lg font-semibold">
-            Farmer Dashboard
-          </span>
+          <span className="text-lg font-semibold">Farmer Dashboard</span>
         </div>
       </div>
 
       {/* Main */}
       <main className="flex-1 p-6 space-y-10">
-
         {/* Welcome */}
         <div>
-          <h1 className="text-2xl font-bold text-base-content">
-            Welcome
-          </h1>
+          <h1 className="text-2xl font-bold text-base-content">Welcome</h1>
           <p className="text-base-content/70">
             Track your soil test requests, results, and upcoming events
           </p>
@@ -60,32 +55,21 @@ export default function FarmerDashboard() {
         {/* Status Card */}
         <div className="card bg-base-100 border border-base-300 shadow-sm">
           <div className="card-body">
-
-            <h2 className="card-title text-lg">
-              Soil Test Booking Status
-            </h2>
+            <h2 className="card-title text-lg">Soil Test Booking Status</h2>
 
             {bookingStatus.hasBooking ? (
               <div className="space-y-3 mt-2">
-
                 <div className="flex justify-between">
-                  <span className="text-base-content/70">
-                    Booking Date
-                  </span>
-                  <span>
-                    {bookingStatus.bookingDate}
-                  </span>
+                  <span className="text-base-content/70">Booking Date</span>
+                  <span>{bookingStatus.bookingDate}</span>
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <span className="text-base-content/70">
-                    Current Status
-                  </span>
+                  <span className="text-base-content/70">Current Status</span>
                   <span className="badge badge-outline badge-lg">
                     {bookingStatus.status}
                   </span>
                 </div>
-
                 {bookingStatus.status === "Completed" && (
                   <button
                     className="btn btn-primary btn-sm mt-4"
@@ -94,7 +78,6 @@ export default function FarmerDashboard() {
                     View Soil Health Card
                   </button>
                 )}
-
               </div>
             ) : (
               <p className="text-base-content/70 mt-2">
@@ -106,13 +89,10 @@ export default function FarmerDashboard() {
 
         {/* Actions */}
         <div className="grid md:grid-cols-2 gap-6">
-
           {/* Book Soil Test */}
           <div className="card bg-base-100 border border-base-300 shadow-sm">
             <div className="card-body">
-              <h2 className="card-title">
-                Book Soil Test
-              </h2>
+              <h2 className="card-title">Book Soil Test</h2>
               <p className="text-sm text-base-content/70">
                 Request a soil test for your land and crops
               </p>
@@ -128,9 +108,7 @@ export default function FarmerDashboard() {
           {/* History */}
           <div className="card bg-base-100 border border-base-300 shadow-sm">
             <div className="card-body">
-              <h2 className="card-title">
-                Past Test History
-              </h2>
+              <h2 className="card-title">Past Test History</h2>
               <p className="text-sm text-base-content/70">
                 View previous soil test reports and results
               </p>
@@ -139,7 +117,6 @@ export default function FarmerDashboard() {
               </button>
             </div>
           </div>
-
         </div>
 
         {/* 🔹 Upcoming Events Section */}
@@ -156,17 +133,13 @@ export default function FarmerDashboard() {
                   className="card bg-base-100 border border-base-300 shadow-sm"
                 >
                   <div className="card-body">
-                    <h3 className="card-title">
-                      {event.title}
-                    </h3>
+                    <h3 className="card-title">{event.title}</h3>
 
                     <p className="text-sm text-base-content/70">
                       {event.topic}
                     </p>
 
-                    <p className="text-sm mt-2">
-                      {event.description}
-                    </p>
+                    <p className="text-sm mt-2">{event.description}</p>
 
                     <div className="mt-4 text-sm space-y-1">
                       <p>
@@ -189,7 +162,6 @@ export default function FarmerDashboard() {
             </p>
           )}
         </div>
-
       </main>
 
       {/* Footer */}

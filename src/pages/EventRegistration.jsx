@@ -2,21 +2,21 @@ import { useState } from "react";
 import useEventStore from "../store/useEventStore.js";
 import toast from "react-hot-toast";
 export default function CreateEvent() {
-  const {addEvent} = useEventStore();
+  const { addEvent } = useEventStore();
   const [eventData, setEventData] = useState({
     title: "",
     Description: "",
     topic: "",
     date: "",
     time: "",
-    Image: "",
+    Image: "sdfsdf",
   });
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
     if (name === "image") {
-      setEventData({ ...eventData, Image:"sample" });
+      setEventData({ ...eventData, Image: "sample" });
     } else {
       setEventData({ ...eventData, [name]: value });
     }
@@ -28,39 +28,34 @@ export default function CreateEvent() {
     const payload = {
       ...eventData,
     };
-    try{
+    try {
       await addEvent(payload);
       console.log("Event Created:", payload);
       toast.success("Event Created");
       setEventData({
-      title: "",
-      Description: "",
-      topic: "",
-      date: "",
-      time: "",
-      Image: null,
-    });
-    }catch(err){
+        title: "",
+        Description: "",
+        topic: "",
+        date: "",
+        time: "",
+        Image: null,
+      });
+    } catch (err) {
       console.log(err);
-      toast.error(err.response?.data?.message || "Error in Event Creation")
+      toast.error(err.response?.data?.message || "Error in Event Creation");
     }
-    
   };
 
   return (
     <div className="min-h-screen bg-base-100 flex flex-col">
-
       {/* Header */}
       <div className="navbar bg-base-200 px-6 shadow-sm">
-        <span className="text-lg font-semibold">
-          Create New Event
-        </span>
+        <span className="text-lg font-semibold">Create New Event</span>
       </div>
 
       {/* Main */}
       <main className="flex-1 flex items-center justify-center px-4">
         <div className="w-full max-w-2xl">
-
           {/* Title */}
           <div className="mb-8 text-center">
             <h1 className="text-2xl font-bold text-base-content">
@@ -74,7 +69,6 @@ export default function CreateEvent() {
           {/* Form */}
           <div className="card bg-base-100 border border-base-300 shadow-sm">
             <form onSubmit={handleSubmit} className="card-body space-y-5">
-
               {/* Title */}
               <div>
                 <label className="label">
@@ -177,7 +171,6 @@ export default function CreateEvent() {
                   Create Event
                 </button>
               </div>
-
             </form>
           </div>
         </div>

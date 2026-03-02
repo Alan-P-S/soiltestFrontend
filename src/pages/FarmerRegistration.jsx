@@ -4,7 +4,7 @@ import useFarmerStore from "../store/useFarmerStore.js";
 
 export default function RegisterFarmer() {
   const { registerFarmer, loading } = useFarmerStore();
-
+  
   const [formData, setFormData] = useState({
     username: "",
     email: "",
