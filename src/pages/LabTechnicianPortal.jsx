@@ -1,132 +1,86 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import useLabPortalStore from "../store/useLabPortalStore.js";
 import toast from "react-hot-toast";
 
-const CROPS = [
-  { id: 1, name: "Rice" },
-  { id: 2, name: "Wheat" },
-  { id: 3, name: "Maize" },
-  { id: 4, name: "Cotton" },
-  { id: 5, name: "Sugarcane" },
-  { id: 6, name: "Groundnut" },
-  { id: 7, name: "Millet" },
-];
-
-const PAGE_SIZE = 4;
-
 export default function LabTechnicianPortal() {
   const {
-    farmers,
+    tests,
+    crops,
     loading,
-    fetchPendingFarmers,
+    fetchPendingTests,
+    fetchCropsByPlot,
     submitSoilReport,
+    updateTestStatus,
   } = useLabPortalStore();
 
-  const [selectedFarmer, setSelectedFarmer] = useState(null);
-  const [selectedCrops, setSelectedCrops] = useState([]);
-
-  const [farmerSearch, setFarmerSearch] = useState("");
-  const [cropSearch, setCropSearch] = useState("");
-
-  const [farmerPage, setFarmerPage] = useState(1);
-  const [cropPage, setCropPage] = useState(1);
+  const [selectedTest, setSelectedTest] = useState(null);
 
   const [soilData, setSoilData] = useState({
     ph: "",
     tss: "",
     organicCarbon: "",
-    soilType: "",
     potassium: "",
     phosphorus: "",
   });
 
-  /* ---------------- FETCH DATA ---------------- */
+  /* ---------------- LOAD TESTS ---------------- */
 
   useEffect(() => {
-    fetchPendingFarmers();
+    fetchPendingTests();
   }, []);
 
-  /* ---------------- FILTERING ---------------- */
+  /* ---------------- SELECT TEST ---------------- */
 
-  const filteredFarmers = useMemo(
-    () =>
-      farmers.filter(
-        (f) =>
-          f.name.toLowerCase().includes(farmerSearch.toLowerCase()) ||
-          f.village.toLowerCase().includes(farmerSearch.toLowerCase()),
-      ),
-    [farmers, farmerSearch],
-  );
+  const selectTest = async (test) => {
+    setSelectedTest(test);
 
-  const filteredCrops = useMemo(
-    () =>
-      CROPS.filter((c) =>
-        c.name.toLowerCase().includes(cropSearch.toLowerCase()),
-      ),
-    [cropSearch],
-  );
-
-  /* ---------------- PAGINATION ---------------- */
-
-  const farmerPages = Math.ceil(filteredFarmers.length / PAGE_SIZE);
-  const cropPages = Math.ceil(filteredCrops.length / PAGE_SIZE);
-
-  const paginatedFarmers = filteredFarmers.slice(
-    (farmerPage - 1) * PAGE_SIZE,
-    farmerPage * PAGE_SIZE,
-  );
-
-  const paginatedCrops = filteredCrops.slice(
-    (cropPage - 1) * PAGE_SIZE,
-    cropPage * PAGE_SIZE,
-  );
-
-  /* ---------------- HANDLERS ---------------- */
-
-  const toggleCrop = (crop) => {
-    setSelectedCrops((prev) =>
-      prev.some((c) => c.id === crop.id)
-        ? prev.filter((c) => c.id !== crop.id)
-        : [...prev, crop],
-    );
+    await fetchCropsByPlot(test.PlotId);
   };
+
+  /* ---------------- INPUT HANDLER ---------------- */
 
   const handleChange = (e) => {
-    setSoilData({ ...soilData, [e.target.name]: e.target.value });
+    setSoilData({
+      ...soilData,
+      [e.target.name]: e.target.value,
+    });
   };
+
+  /* ---------------- SUBMIT ---------------- */
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!selectedFarmer) return;
-
+    console.log("updating test status");
+    if (!selectedTest) return;
     try {
       const payload = {
-        UserId: selectedFarmer.testId,
-        crops: selectedCrops.map((c) => c.name),
+        UserId: selectedTest.User.id,
+        PlotId: selectedTest.PlotId,
+        TestId: selectedTest.id,
+        soilType: selectedTest.Plot.soilType,
         ...soilData,
       };
 
-      await submitSoilReport(payload);
+      const result = await submitSoilReport(payload);
+      console.log("Result", result);
+      await updateTestStatus(selectedTest.id);
 
-      toast.success("Soil test submitted");
+      toast.success("Soil report submitted");
 
-      // Optional UI reset
-      setSelectedFarmer(null);
-      setSelectedCrops([]);
+      setSelectedTest(null);
+
       setSoilData({
         ph: "",
         tss: "",
         organicCarbon: "",
-        soilType: "",
         potassium: "",
         phosphorus: "",
       });
 
-      fetchPendingFarmers(); // refresh list
-
+      fetchPendingTests();
     } catch (err) {
-      console.error("Submission failed:", err);
+      console.log(err.response?.data || err.message);
+      toast.error("Submission failed");
     }
   };
 
@@ -134,49 +88,38 @@ export default function LabTechnicianPortal() {
 
   return (
     <div className="min-h-screen bg-base-100 flex flex-col">
-      <div className="navbar bg-base-200 px-6 shadow-sm">
-        <span className="text-lg font-semibold">
-          Lab Technician Portal
-        </span>
+      <div className="navbar bg-base-200 shadow-sm px-6">
+        <span className="text-lg font-semibold">Lab Technician Portal</span>
       </div>
 
-      <main className="flex-1 p-4">
+      <main className="flex-1 p-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* LEFT PANEL — PENDING TESTS */}
 
-          {/* FARMERS */}
           <div className="lg:col-span-3 card border border-base-300">
-            <div className="card-body p-4 space-y-3">
-              <h2 className="font-semibold">Pending Farmers</h2>
-
-              <input
-                className="input input-bordered input-sm"
-                placeholder="Search name / village"
-                value={farmerSearch}
-                onChange={(e) => {
-                  setFarmerSearch(e.target.value);
-                  setFarmerPage(1);
-                }}
-              />
+            <div className="card-body p-4">
+              <h2 className="font-semibold mb-2">Pending Tests</h2>
 
               {loading ? (
-                <p className="text-sm opacity-70">Loading...</p>
+                <p>Loading...</p>
               ) : (
                 <table className="table table-sm">
                   <tbody>
-                    {paginatedFarmers.map((f) => (
+                    {tests.map((t) => (
                       <tr
-                        key={f.testId}
-                        onClick={() => setSelectedFarmer(f)}
-                        className={`cursor-pointer transition ${
-                          selectedFarmer?.id === f.testId
+                        key={t.id}
+                        onClick={() => selectTest(t)}
+                        className={`cursor-pointer hover:bg-base-200 ${
+                          selectedTest?.id === t.id
                             ? "bg-base-200 font-semibold border-l-4 border-primary"
-                            : "hover:bg-base-200/50"
+                            : ""
                         }`}
                       >
                         <td>
-                          {f.name}
+                          {t.User.username}
+
                           <div className="text-xs opacity-70">
-                            {f.village}
+                            {t.User.place}
                           </div>
                         </td>
                       </tr>
@@ -184,115 +127,122 @@ export default function LabTechnicianPortal() {
                   </tbody>
                 </table>
               )}
-
-              <div className="flex justify-between text-sm">
-                <button
-                  className="btn btn-xs"
-                  disabled={farmerPage === 1}
-                  onClick={() => setFarmerPage((p) => p - 1)}
-                >
-                  Prev
-                </button>
-                <span>
-                  {farmerPage} / {farmerPages || 1}
-                </span>
-                <button
-                  className="btn btn-xs"
-                  disabled={farmerPage === farmerPages}
-                  onClick={() => setFarmerPage((p) => p + 1)}
-                >
-                  Next
-                </button>
-              </div>
             </div>
           </div>
 
-           {/* FORM */}
+          {/* CENTER — SOIL REPORT FORM */}
+
           <div className="lg:col-span-6 card border border-base-300">
             <form onSubmit={handleSubmit} className="card-body space-y-4">
               <div className="bg-base-200 p-3 rounded-lg text-sm">
                 <p>
                   <b>Farmer:</b>{" "}
-                  {selectedFarmer ? selectedFarmer.name : "Not selected"}
+                  {selectedTest ? selectedTest.User.username : "Not selected"}
                 </p>
+
                 <p>
-                  <b>Crops:</b>{" "}
-                  {selectedCrops.length
-                    ? selectedCrops.map((c) => c.name).join(", ")
-                    : "None selected"}
+                  <b>Plot ID:</b> {selectedTest ? selectedTest.PlotId : "-"}
                 </p>
               </div>
 
               <h2 className="font-semibold">Soil Test Values</h2>
 
               <div className="grid md:grid-cols-2 gap-4">
-                <input name="ph" type="number" step="0.01" required placeholder="pH value" className="input input-bordered" value={soilData.ph} onChange={handleChange}/>
-                <input name="tss" type="number" required placeholder="TSS (mg/kg)" className="input input-bordered" value={soilData.tss} onChange={handleChange}/>
-                <input name="organicCarbon" type="number" step="0.01" required placeholder="Organic Carbon (%)" className="input input-bordered" value={soilData.organicCarbon} onChange={handleChange}/>
-                <select name="soilType" required className="select select-bordered" value={soilData.soilType} onChange={handleChange}>
-                  <option value="">Select Soil Type</option>
-                  <option>Sandy</option>
-                  <option>Clay</option>
-                  <option>Loamy</option>
-                  <option>Silty</option>
-                </select>
-                <input name="potassium" type="number" required placeholder="Potassium (K)" className="input input-bordered" value={soilData.potassium} onChange={handleChange}/>
-                <input name="phosphorus" type="number" required placeholder="Phosphorus (P)" className="input input-bordered" value={soilData.phosphorus} onChange={handleChange}/>
+                <input
+                  name="ph"
+                  type="number"
+                  step="0.01"
+                  required
+                  placeholder="pH value"
+                  className="input input-bordered"
+                  value={soilData.ph}
+                  onChange={handleChange}
+                />
+
+                <input
+                  name="tss"
+                  type="number"
+                  required
+                  placeholder="TSS"
+                  className="input input-bordered"
+                  value={soilData.tss}
+                  onChange={handleChange}
+                />
+
+                <input
+                  name="organicCarbon"
+                  type="number"
+                  step="0.01"
+                  required
+                  placeholder="Organic Carbon"
+                  className="input input-bordered"
+                  value={soilData.organicCarbon}
+                  onChange={handleChange}
+                />
+
+                <input
+                  type="text"
+                  disabled
+                  className="input input-bordered"
+                  value={
+                    selectedTest ? selectedTest.Plot.soilType : "Not selected"
+                  }
+                ></input>
+
+                <input
+                  name="potassium"
+                  type="number"
+                  required
+                  placeholder="Potassium"
+                  className="input input-bordered"
+                  value={soilData.potassium}
+                  onChange={handleChange}
+                />
+
+                <input
+                  name="phosphorus"
+                  type="number"
+                  required
+                  placeholder="Phosphorus"
+                  className="input input-bordered"
+                  value={soilData.phosphorus}
+                  onChange={handleChange}
+                />
               </div>
 
               <div className="flex justify-end">
-                <button className="btn btn-primary" disabled={!selectedFarmer || selectedCrops.length === 0}>
+                <button className="btn btn-primary" disabled={!selectedTest}>
                   Submit Soil Report
                 </button>
               </div>
             </form>
           </div>
 
-          {/* CROPS */}
+          {/* RIGHT PANEL — CROPS */}
+
           <div className="lg:col-span-3 card border border-base-300">
-            <div className="card-body p-4 space-y-3">
-              <h2 className="font-semibold">Crops</h2>
+            <div className="card-body p-4">
+              <h2 className="font-semibold mb-2">Crops in Plot</h2>
 
-              <input
-                className="input input-bordered input-sm"
-                placeholder="Search crop"
-                value={cropSearch}
-                onChange={(e) => {
-                  setCropSearch(e.target.value);
-                  setCropPage(1);
-                }}
-              />
-
-              <table className="table table-sm">
-                <tbody>
-                  {CROPS.map((c) => {
-                    const selected = selectedCrops.some((x) => x.id === c.id);
-                    return (
-                      <tr
-                        key={c.id}
-                        onClick={() => toggleCrop(c)}
-                        className={`cursor-pointer transition ${
-                          selected
-                            ? "bg-base-200 font-semibold border-l-4 border-primary"
-                            : "hover:bg-base-200/50"
-                        }`}
-                      >
-                        <td className="flex items-center gap-2">
-                          <input type="checkbox" checked={selected} readOnly className="checkbox checkbox-xs"/>
-                          {c.name}
-                        </td>
+              {crops.length === 0 ? (
+                <p className="text-sm opacity-70">No crops available</p>
+              ) : (
+                <table className="table table-sm">
+                  <tbody>
+                    {crops.map((c) => (
+                      <tr key={c.id}>
+                        <td>{c.name}</td>
                       </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
-
         </div>
       </main>
 
-      <footer className="bg-base-200 text-base-content/60 text-center py-3 text-sm">
+      <footer className="bg-base-200 text-center py-3 text-sm opacity-70">
         Authorized Laboratory Access Only
       </footer>
     </div>

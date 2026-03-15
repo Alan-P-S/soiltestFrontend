@@ -4,7 +4,11 @@ import {
   CalendarPlus,
   FileEdit,
   TestTube,
-  TreePalm, // NEW ICON
+  LandPlot,
+  TreePalm,
+  MapPinned,
+  Sprout,
+  FileText, // NEW ICON
 } from "lucide-react";
 
 export default function LabTechnicianHome() {
@@ -42,7 +46,7 @@ export default function LabTechnicianHome() {
               className="card bg-base-100 border border-base-300 shadow-sm hover:shadow-md cursor-pointer transition"
             >
               <div className="card-body items-center text-center">
-                <UserPlus size={40} className="opacity-80" />
+                <UserPlus size={40} className="opacity-80" color="#006b39" />
                 <h2 className="card-title">Register Farmer</h2>
                 <p className="text-sm text-base-content/70">
                   Add a new farmer to the system
@@ -72,7 +76,7 @@ export default function LabTechnicianHome() {
               className="card bg-base-100 border border-base-300 shadow-sm hover:shadow-md cursor-pointer transition"
             >
               <div className="card-body items-center text-center">
-                <TestTube size={40} className="opacity-80" />
+                <TestTube size={40} className="opacity-80" color="#006b39" />
                 <h2 className="card-title">Add Soil Test</h2>
                 <p className="text-sm text-base-content/70">
                   Create a new soil test sample entry
@@ -87,7 +91,7 @@ export default function LabTechnicianHome() {
               className="card bg-base-100 border border-base-300 shadow-sm hover:shadow-md cursor-pointer transition"
             >
               <div className="card-body items-center text-center">
-                <FileEdit size={40} className="opacity-80" />
+                <FileEdit size={40} className="opacity-80" color="#006b39" />
                 <h2 className="card-title">Update Test Result</h2>
                 <p className="text-sm text-base-content/70">
                   Enter or modify soil test results
@@ -104,6 +108,56 @@ export default function LabTechnicianHome() {
                 <TreePalm size={40} className="opacity-80" />
                 <h2 className="card-title">Add New Crop</h2>
                 <p className="text-sm text-base-content/70">Create new Crops</p>
+                <button className="btn btn-primary btn-sm mt-4">Proceed</button>
+              </div>
+            </div>
+            <div
+              onClick={() => navigate("/lab/plot-add")}
+              className="card bg-base-100 border border-base-300 shadow-sm hover:shadow-md cursor-pointer transition"
+            >
+              <div className="card-body items-center text-center">
+                <LandPlot size={40} className="opacity-80" color="#006b39" />
+                <h2 className="card-title">Add New Plot and Crop</h2>
+                <p className="text-sm text-base-content/70">Create new Crops</p>
+                <button className="btn btn-primary btn-sm mt-4">Proceed</button>
+              </div>
+            </div>
+            <div
+              onClick={() => navigate("/lab/plot-map")}
+              className="card bg-base-100 border border-base-300 shadow-sm hover:shadow-md cursor-pointer transition"
+            >
+              <div className="card-body items-center text-center">
+                <MapPinned size={40} className="opacity-80" />
+                <h2 className="card-title">Plot Map</h2>
+                <p className="text-sm text-base-content/70">
+                  View Plots in Map
+                </p>
+                <button className="btn btn-primary btn-sm mt-4">Proceed</button>
+              </div>
+            </div>
+            <div
+              onClick={() => navigate("/lab/plot-crop-add")}
+              className="card bg-base-100 border border-base-300 shadow-sm hover:shadow-md cursor-pointer transition"
+            >
+              <div className="card-body items-center text-center">
+                <Sprout size={40} className="opacity-80" />
+                <h2 className="card-title">Crop Add</h2>
+                <p className="text-sm text-base-content/70">
+                  Add Crops to Plot
+                </p>
+                <button className="btn btn-primary btn-sm mt-4">Proceed</button>
+              </div>
+            </div>
+            <div
+              onClick={() => navigate("/lab/download-result")}
+              className="card bg-base-100 border border-base-300 shadow-sm hover:shadow-md cursor-pointer transition"
+            >
+              <div className="card-body items-center text-center">
+                <FileText size={40} className="opacity-80" />
+                <h2 className="card-title">Download Result</h2>
+                <p className="text-sm text-base-content/70">
+                  Download Test Result Data PDF
+                </p>
                 <button className="btn btn-primary btn-sm mt-4">Proceed</button>
               </div>
             </div>

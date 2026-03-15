@@ -2,33 +2,70 @@ import { create } from "zustand";
 import {axiosInstance} from "../lib/axios.js";
 
 const useLabPortalStore = create((set) => ({
-  farmers: [],
+  tests: [],
+  crops: [],
   loading: false,
-  error: null,
 
-  fetchPendingFarmers: async () => {
-  try {
-    set({ loading: true });
+  /* ---------------- FETCH PENDING TESTS ---------------- */
 
-    const res = await axiosInstance.get("test/alltests");
+  fetchPendingTests: async () => {
+    try {
+      set({ loading: true });
 
-    const mapped = res.data.data.map((test) => ({
-      testId: test.id,          // unique test
-      userId: test.User.id,     // farmer id
-      name: test.User.username,
-      village: test.User.place,
-      phone: test.User.phone,
-      status: test.status,
-    }));
+      const res = await axiosInstance.get("/test/alltests");
+      console.log(res);
+      set({
+        tests: res.data,
+        loading: false,
+      });
+    } catch (err) {
+      console.error(err);
+      set({ loading: false });
+    }
+  },
 
-    set({ farmers: mapped, loading: false });
-  } catch (err) {
-    set({ loading: false });
-  }
-},
+  /* ---------------- FETCH CROPS BY PLOT ---------------- */
+
+  fetchCropsByPlot: async (PlotId) => {
+    
+    try {
+      const res = await axiosInstance.get(`/plot/plot-crop/${PlotId}`);
+      console.log(res);
+      set({
+        crops: res.data,
+      });
+
+      return res.data;
+    } catch (err) {
+      console.log(err);
+      console.error(err);
+      set({ crops: [] });
+      return [];
+    }
+  },
+
+  /* ---------------- SUBMIT REPORT ---------------- */
 
   submitSoilReport: async (payload) => {
-    await axiosInstance.post("/testresult/add", payload);
+    console.log(payload);
+    try {
+      const res = await axiosInstance.post("/report/add", payload);
+      return res.data;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  },
+
+  /* ---------------- UPDATE TEST STATUS ---------------- */
+
+  updateTestStatus: async (testId) => {
+    console.log("Updating status");
+    try {
+      await axiosInstance.patch(`/test/update-test-status/${testId}`,{});
+    } catch (err) {
+      console.log(err);
+    }
   },
 }));
 
